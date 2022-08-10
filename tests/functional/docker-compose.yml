@@ -1,0 +1,47 @@
+version: '3'
+services:
+
+  t_redis:
+    container_name: t_redis
+    image: redis:6-alpine
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - test_redis_data:/data
+    ports:
+      - $REDIS_PORT:$REDIS_PORT
+
+  t_app:
+    build:
+      context: ../../.
+      dockerfile: docker_config/app/Dockerfile
+    image: api_app
+    volumes:
+      - ../../src:/var/www/api_app
+    env_file:
+      - .env
+    ports:
+      - 8000:8000
+    depends_on:
+      - t_elastic
+      - t_redis
+
+  t_elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
+    env_file:
+      - .env
+    environment:
+      - discovery.type=single-node
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=$JAVA_OPTS
+    container_name: t_elastic
+    ports:
+      - $ELASTIC_PORT:$ELASTIC_PORT
+    volumes:
+      - test_elastic_data:/usr/share/elasticsearch/data
+
+volumes:
+  test_redis_data:
+  test_elastic_data:
+

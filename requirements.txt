@@ -1,0 +1,9 @@
+aioredis==2.0.1
+elasticsearch[async]==7.14.0
+fastapi==0.75.0
+pydantic==1.9.0
+uvicorn==0.17.6
+uvloop==0.16.0
+orjson==3.6.7
+python-dotenv==0.19.2
+backoff==1.11.1
